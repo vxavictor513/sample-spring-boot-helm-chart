@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "dinozords.fullname" . }}
+  name: {{ include "sample.fullname" . }}
   labels:
-    {{- include "dinozords.labels" . | nindent 4 }}
+    {{- include "sample.labels" . | nindent 4 }}
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
-      {{- include "dinozords.selectorLabels" . | nindent 6 }}
+      {{- include "sample.selectorLabels" . | nindent 6 }}
   template:
     metadata:
     {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "dinozords.selectorLabels" . | nindent 8 }}
+        {{- include "sample.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "dinozords.serviceAccountName" . }}
+      serviceAccountName: {{ include "sample.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -38,15 +38,19 @@ spec:
               containerPort: {{ .Values.service.internalPort }}
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
+          {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
+          {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- if .Values.resources }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- end}}
+          env:
+          {{- toYaml .Values.env | nindent 10 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

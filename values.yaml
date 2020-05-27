@@ -1,4 +1,4 @@
-# Default values for dinozords.
+# Default values for sample.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -40,6 +40,27 @@ service:
   type: LoadBalancer
   externalPort: 8080
   internalPort: 8080
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
+  # initialDelaySeconds: 120
+  # timeoutSeconds: 60
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
+  # initialDelaySeconds: 120
+  # timeoutSeconds: 60
+
+env:
+  # - name: SPRING_PROFILES_ACTIVE
+  #   value: dev
+  - name: MY_POD_IP
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP
 
 ingress:
   enabled: false
