@@ -9,8 +9,8 @@ on:
     branches: [ master ]
 
 env:
-  HELM_USERNAME: ${{ secrets.HELM_USERNAME }}
-  HELM_PASSWORD: ${{ secrets.HELM_PASSWORD }}
+  HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+  HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -34,7 +34,7 @@ jobs:
       run: helm lint .
     
     - name: Configure Helm repo
-      run: helm repo add --username=$HELM_USERNAME --password=$HELM_PASSWORD library http://34.87.54.235:80/chartrepo/library
+      run: helm repo add --username=$HARBOR_USERNAME --password=$HARBOR_PASSWORD library http://34.87.54.235:80/chartrepo/library
 
     - name: Push chart
       run: helm push . library
